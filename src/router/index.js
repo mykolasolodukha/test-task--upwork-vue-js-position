@@ -338,4 +338,22 @@ const router = createRouter({
   linkActiveClass: "active",
 });
 
+router.beforeEach((to, from, next) => {
+  if (localStorage.getItem("token")) {
+    // if the user is on the login page, redirect to the dashboard
+    if (to.path === "/authentication/signin/basic") {
+      next({ path: "/dashboards/dashboard-default" });
+    } else {
+      next();
+    }
+  } else {
+    // if the user is not authenticated, redirect to the login page
+    if (to.path !== "/authentication/signin/basic") {
+      next({ path: "/authentication/signin/basic" });
+    } else {
+      next();
+    }
+  }
+});
+
 export default router;

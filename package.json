@@ -29,15 +29,17 @@
     "simple-datatables": "^3.2.0",
     "three": "^0.124.0",
     "vue": "^3.2.25",
+    "vue-axios": "^3.5.2",
     "vue-flatpickr-component": "^9.0.5",
     "vue-round-slider": "1.0.1",
-    "vue-router": "^4.0.14",
+    "vue-router": "^4.3.2",
     "vue-sweetalert2": "^5.0.2",
     "vue-tilt.js": "^1.1.1",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.2.0",
+    "axios-mock-adapter": "^1.22.0",
     "eslint": "^8.11.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-vue": "^8.5.0",
