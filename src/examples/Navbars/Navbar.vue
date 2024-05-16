@@ -67,7 +67,9 @@
               <span v-if="$store.state.isRTL" class="d-sm-inline d-none"
                 >يسجل دخول</span
               >
-              <span v-else class="d-sm-inline d-none">Sign In</span>
+              <span v-else @click="logOut" class="d-sm-inline d-none"
+                >Sign Out</span
+              >
             </router-link>
           </li>
           <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -226,6 +228,7 @@
 </template>
 <script>
 import Breadcrumbs from "../Breadcrumbs.vue";
+import { logoutUser } from "../../services.js/authServices";
 
 export default {
   name: "Navbar",
@@ -247,6 +250,19 @@ export default {
   computed: {
     currentRouteName() {
       return this.$route.name;
+    },
+  },
+  methods: {
+    async logOut() {
+      try {
+        // Call the loginUser function with email and password
+        const userData = await logoutUser();
+        console.log("User logged in:", userData);
+        // Redirect or do something else upon successful login
+      } catch (error) {
+        console.error("Login failed:", error);
+        // Handle login error, e.g., show error message to the user
+      }
     },
   },
 };

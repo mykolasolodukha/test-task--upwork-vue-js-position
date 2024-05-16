@@ -18,6 +18,7 @@ export default createStore({
     showFooter: true,
     showMain: true,
     isLargeScreen: true,
+    users: [],
   },
   mutations: {
     toggleConfigurator(state) {
@@ -50,6 +51,9 @@ export default createStore({
     sidebarType(state, payload) {
       state.isTransparent = payload;
     },
+    addUser(state, payload) {
+      state.users = payload;
+    },
   },
   actions: {
     setNavbarFixed({ state }, payload) {
@@ -57,6 +61,9 @@ export default createStore({
     },
     setDarkMode({ commit }, payload) {
       commit("SET_DARK_MODE", !!payload);
+    },
+    setUserData({ commit }, payload) {
+      commit("addUser", !!payload);
     },
     setShowSidebar({ commit }, payload) {
       commit("SET_SHOW_SIDEBAR", !!payload);
@@ -95,6 +102,9 @@ export default createStore({
   getters: {
     isRTL(state) {
       return state.isRTL;
+    },
+    dbUsers(state) {
+      return state.users;
     },
     sidebarTransparent(state) {
       return state.isTransparent;
