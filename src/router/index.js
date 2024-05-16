@@ -53,7 +53,7 @@ import Error500 from "../views/auth/error/Error500.vue";
 import lockBasic from "../views/auth/lock/Basic.vue";
 import lockCover from "../views/auth/lock/Cover.vue";
 import lockIllustration from "../views/auth/lock/Illustration.vue";
-
+import { isUserLoggedIn } from './utils'
 const routes = [
   {
     path: "/",
@@ -337,5 +337,16 @@ const router = createRouter({
   routes,
   linkActiveClass: "active",
 });
+
+router.beforeEach((to, from, next) => {
+  const check = isUserLoggedIn()
+  if (!check && to.path === '/authentication/signin/basic') {
+    next()
+  } else if (!check && to.path !== '/authentication/signin/basic') {
+    next('/authentication/signin/basic')
+  } else {
+    next()
+  }
+})
 
 export default router;

@@ -28,7 +28,7 @@
           </div>
           <div class="px-3 row px-xl-5 px-sm-4">
             <div class="px-1 col-3 ms-auto">
-              <a class="btn btn-outline-light w-100" href="javascript:;">
+              <a class="btn btn-outline-light w-100">
                 <svg
                   width="24px"
                   height="32px"
@@ -61,7 +61,7 @@
               </a>
             </div>
             <div class="px-1 col-3">
-              <a class="btn btn-outline-light w-100" href="javascript:;">
+              <a class="btn btn-outline-light w-100">
                 <svg
                   width="24px"
                   height="32px"
@@ -88,7 +88,7 @@
               </a>
             </div>
             <div class="px-1 col-3 me-auto">
-              <a class="btn btn-outline-light w-100" href="javascript:;">
+              <a class="btn btn-outline-light w-100">
                 <svg
                   width="24px"
                   height="32px"
@@ -128,13 +128,22 @@
             </div>
           </div>
           <div class="card-body">
-            <form role="form" class="text-start">
+            <p>username: kminchelle</p>
+            <p>password: 0lelplR</p>
+            <form class="text-start" @submit.prevent="login">
               <div class="mb-3">
-                <vsud-input type="email" placeholder="Email" name="email" />
+                <input
+                  v-model="email"
+                  type="text"
+                  class="form-control"
+                  name="email"
+                />
               </div>
               <div class="mb-3">
-                <vsud-input
+                <input
+                  v-model="password"
                   type="password"
+                  class="form-control"
                   placeholder="Password"
                   name="password"
                 />
@@ -183,6 +192,8 @@ import AppFooter from "@/examples/PageLayout/Footer.vue";
 import VsudInput from "@/components/VsudInput.vue";
 import VsudSwitch from "@/components/VsudSwitch.vue";
 import VsudButton from "@/components/VsudButton.vue";
+import { loginUser } from "../../../services.js/authServices";
+import router from "../../../router";
 
 export default {
   name: "SigninBasic",
@@ -194,7 +205,7 @@ export default {
     VsudButton,
   },
   data() {
-    return { bgImg };
+    return { bgImg, email: "kminchelle", password: "0lelplR" };
   },
   beforeMount() {
     this.$store.state.hideConfigButton = true;
@@ -207,6 +218,22 @@ export default {
     this.$store.state.showNavbar = true;
     this.$store.state.showSidenav = true;
     this.$store.state.showFooter = true;
+  },
+  methods: {
+    async login() {
+      try {
+        // Call the loginUser function with email and password
+        const userData = await loginUser(this.email, this.password);
+        console.log("User logged in:", userData);
+        if (userData) {
+          router.push("/");
+        }
+        // Redirect or do something else upon successful login
+      } catch (error) {
+        console.error("Login failed:", error);
+        // Handle login error, e.g., show error message to the user
+      }
+    },
   },
 };
 </script>
