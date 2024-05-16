@@ -32,6 +32,11 @@ export default {
       type: Boolean,
       default: false,
     },
+    type: {
+      type: String,
+      default: 'button',
+      validator: value => ['button', 'reset', 'submit'].includes(value)
+    }
   },
   methods: {
     getClasses: (variant, color, size, fullWidth, active) => {
