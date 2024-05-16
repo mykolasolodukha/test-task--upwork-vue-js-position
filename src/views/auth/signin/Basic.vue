@@ -126,17 +126,20 @@
                 </svg>
               </a>
             </div>
+   
           </div>
           <div class="card-body">
+            
             <form role="form" class="text-start">
               <div class="mb-3">
-                <vsud-input type="email" placeholder="Email" name="email" />
+                <vsud-input type="email" placeholder="Email" name="email" @input="updateEmail" />
               </div>
               <div class="mb-3">
                 <vsud-input
                   type="password"
                   placeholder="Password"
                   name="password"
+                  @input="updatePassword"
                 />
               </div>
               <vsud-switch id="rememberMe"> Remember me </vsud-switch>
@@ -146,6 +149,8 @@
                   variant="gradient"
                   color="info"
                   full-width
+                  type="button"
+                  @click="signIn"
                 >
                   Sign in
                 </vsud-button>
@@ -163,6 +168,8 @@
                   variant="gradient"
                   color="dark"
                   full-width
+                  type="button"
+                  @click="signUp"
                 >
                   Sign up
                 </vsud-button>
@@ -183,6 +190,9 @@ import AppFooter from "@/examples/PageLayout/Footer.vue";
 import VsudInput from "@/components/VsudInput.vue";
 import VsudSwitch from "@/components/VsudSwitch.vue";
 import VsudButton from "@/components/VsudButton.vue";
+import axios from 'axios';
+import { useRouter } from "vue-router";
+import { reactive, toRefs } from 'vue';
 
 export default {
   name: "SigninBasic",
@@ -193,8 +203,40 @@ export default {
     VsudSwitch,
     VsudButton,
   },
-  data() {
-    return { bgImg };
+  setup() {
+    const router = useRouter();
+    const state = reactive({
+      email: "",
+      password: "",
+    });
+    return {
+      updateEmail(newValue) {
+      state.email = newValue.target.value;
+    },
+    updatePassword(newValue) {
+      state.password = newValue.target.value;
+    },
+    signIn() {
+      if (state.email && state.password) {
+        localStorage.setItem("token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTU4NjMyMjksImV4cCI6MTc0NzM5OTIyOSwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.OexXQaQsIeYHslj0HGdKUbkGdSUvQc5Zi9CjhkFj9zQ");
+        router.push("/dashboards/dashboard-default");
+      }
+    },
+    signUp() {
+      if (state.email && state.password) {
+        localStorage.setItem("token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTU4NjMyMjksImV4cCI6MTc0NzM5OTIyOSwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.OexXQaQsIeYHslj0HGdKUbkGdSUvQc5Zi9CjhkFj9zQ");
+        router.push("/dashboards/dashboard-default");
+      }
+    },
+    }
+  },
+  data() { 
+    return { 
+      bgImg: "",
+    };
+  },
+  methods: {
+    
   },
   beforeMount() {
     this.$store.state.hideConfigButton = true;

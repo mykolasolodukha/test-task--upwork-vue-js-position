@@ -141,11 +141,14 @@ import Card from "@/examples/Cards/Card.vue";
 import ActiveUsersChart from "@/examples/Charts/ActiveUsersChart.vue";
 import GradientLineChart from "@/examples/Charts/GradientLineChart.vue";
 import Globe from "@/examples/Globe.vue";
+import { onMounted } from 'vue'; 
+import axios from 'axios';
 
 import US from "@/assets/img/icons/flags/US.png";
 import DE from "@/assets/img/icons/flags/DE.png";
 import GB from "@/assets/img/icons/flags/GB.png";
 import BR from "@/assets/img/icons/flags/BR.png";
+
 
 export default {
   name: "DashboardDefault",
@@ -154,6 +157,22 @@ export default {
     ActiveUsersChart,
     GradientLineChart,
     Globe,
+  },
+  setup(){
+    onMounted(() => {
+      axios.post('/api/test', {
+        data: 'data'
+      })
+      .then((response) => {
+        console.log(response);
+      }, (error) => {
+        console.log(error);
+      });
+  });
+
+  return {
+    // return your reactive properties or methods here
+  };
   },
   data() {
     return {

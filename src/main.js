@@ -18,6 +18,7 @@ import "./assets/css/nucleo-svg.css";
 import VueTilt from "vue-tilt.js";
 import VueSweetalert2 from "vue-sweetalert2";
 import SoftUIDashboard from "./soft-ui-dashboard";
+import '@/interceptors/index'
 
 const appInstance = createApp(App);
 appInstance.use(store);
