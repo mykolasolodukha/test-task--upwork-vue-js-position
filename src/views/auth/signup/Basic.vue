@@ -135,25 +135,64 @@
             </div>
           </div>
           <div class="card-body">
-            <form role="form">
+            <form role="form" @submit.prevent="onSignup">
               <div class="mb-3">
-                <vsud-input type="text" placeholder="Name" aria-label="Name" />
+                <vsud-input
+                  v-model="name"
+                  type="text"
+                  placeholder="Name"
+                  aria-label="Name"
+                  @change="
+                    onFieldInput('name', $event?.target?.value, ['required'])
+                  "
+                />
+
+                <!-- Error Message -->
+                <p v-if="errors?.name" style="color: red; font-size: small">
+                  {{ errors?.name }}
+                </p>
               </div>
               <div class="mb-3">
                 <vsud-input
+                  v-model="email"
                   type="email"
                   placeholder="Email"
                   aria-label="Email"
+                  @change="
+                    onFieldInput('email', $event?.target?.value, [
+                      'required',
+                      'email',
+                    ])
+                  "
                 />
+                <!-- Error Message -->
+                <p v-if="errors?.email" style="color: red; font-size: small">
+                  {{ errors?.email }}
+                </p>
               </div>
               <div class="mb-3">
                 <vsud-input
+                  v-model="password"
                   type="password"
                   placeholder="Password"
                   aria-label="Password"
+                  @change="
+                    onFieldInput('password', $event?.target?.value, [
+                      'required',
+                      'password',
+                    ])
+                  "
                 />
+                <!-- Error Message -->
+                <p v-if="errors?.password" style="color: red; font-size: small">
+                  {{ errors?.password }}
+                </p>
               </div>
-              <vsud-checkbox id="flexCheckDefault" checked>
+              <vsud-checkbox
+                v-model="agreeToTerms"
+                id="flexCheckDefault"
+                checked
+              >
                 I agree the
                 <a href="javascript:;" class="text-dark font-weight-bolder"
                   >Terms and Conditions</a
@@ -166,6 +205,7 @@
                   full-width
                   variant="gradient"
                   class="my-4 mb-2"
+                  :disabled="!agreeToTerms"
                 >
                   Sign up
                 </vsud-button>
@@ -193,6 +233,11 @@ import AppFooter from "@/examples/PageLayout/Footer.vue";
 import VsudInput from "@/components/VsudInput.vue";
 import VsudCheckbox from "@/components/VsudCheckbox.vue";
 import VsudButton from "@/components/VsudButton.vue";
+import { validateFields } from "../../../lib/util";
+import useApi from "../../../composables/useApi";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 export default {
   name: "SignupBasic",
@@ -204,7 +249,15 @@ export default {
     VsudButton,
   },
   data() {
-    return { bgImg };
+    return {
+      bgImg,
+      name: "",
+      email: "",
+      password: "",
+      agreeToTerms: true,
+      loading: false,
+      errors: {},
+    };
   },
   created() {
     this.$store.state.hideConfigButton = true;
@@ -217,6 +270,60 @@ export default {
     this.$store.state.showNavbar = true;
     this.$store.state.showSidenav = true;
     this.$store.state.showFooter = true;
+  },
+  methods: {
+    async onSignup() {
+      // Validate fields
+      const errorResponse = validateFields([
+        { value: this.email, name: "email", rules: ["required", "email"] },
+        {
+          value: this.password,
+          name: "password",
+          rules: ["required", "password"],
+        },
+        { value: this.name, name: "name", rules: ["required"] },
+      ]);
+
+      // If there is an error, set it to error
+      if (errorResponse) {
+        this.errors = errorResponse;
+        return;
+      }
+
+      // Use the useApi composable to make a request
+      const { requestData, loading } = useApi();
+
+      this.loading = loading;
+
+      try {
+        // Make a request to the server
+        await requestData("POST", "/auth/signup/basic", {
+          data: {
+            email: this.email,
+            password: this.password,
+            name: this.name,
+          },
+        });
+
+        // Redirect to sign in page or verification page
+        router.replace({ query: { current: "Signin Basic" } });
+      } catch (err) {
+        // Set error message
+        this.errors = {
+          general: err.response.data.message,
+        };
+      }
+    },
+
+    onFieldInput(name, value, rules) {
+      const errorResponse = validateFields([{ value, name, rules }]);
+      console.log(errorResponse, { name, value, rules });
+      if (errorResponse[name])
+        this.errors = { ...this.error, ...errorResponse };
+      else {
+        this.errors[name] = null;
+      }
+    },
   },
 };
 </script>
