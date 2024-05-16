@@ -54,6 +54,8 @@ import lockBasic from "../views/auth/lock/Basic.vue";
 import lockCover from "../views/auth/lock/Cover.vue";
 import lockIllustration from "../views/auth/lock/Illustration.vue";
 
+// import useAuth from '../composables/useAuth'
+
 const routes = [
   {
     path: "/",
@@ -337,5 +339,12 @@ const router = createRouter({
   routes,
   linkActiveClass: "active",
 });
+
+// router guard
+// router.beforeEach((to, from, next) => {
+//   const { isAuthenticated } = useAuth()
+//   if(to.meta.requiresAuth && !isAuthenticated()) next('/authentication/signin/basic')
+//   else next()
+// });
 
 export default router;
