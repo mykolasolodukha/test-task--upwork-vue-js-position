@@ -137,10 +137,16 @@
           <div class="card-body">
             <form role="form">
               <div class="mb-3">
-                <vsud-input type="text" placeholder="Name" aria-label="Name" />
+                <vsud-input
+                  v-model="newUser.name"
+                  type="text"
+                  placeholder="Name"
+                  aria-label="Name"
+                />
               </div>
               <div class="mb-3">
                 <vsud-input
+                  v-model="newUser.email"
                   type="email"
                   placeholder="Email"
                   aria-label="Email"
@@ -148,6 +154,7 @@
               </div>
               <div class="mb-3">
                 <vsud-input
+                  v-model="newUser.password"
                   type="password"
                   placeholder="Password"
                   aria-label="Password"
@@ -162,6 +169,7 @@
 
               <div class="text-center">
                 <vsud-button
+                  @click="signUp"
                   color="dark"
                   full-width
                   variant="gradient"
@@ -172,9 +180,12 @@
               </div>
               <p class="text-sm mt-3 mb-0">
                 Already have an account?
-                <a href="javascript:;" class="text-dark font-weight-bolder"
-                  >Sign in</a
+                <router-link
+                  to="/authentication/signin/basic"
+                  class="text-dark font-weight-bolder"
                 >
+                  Sign in
+                </router-link>
               </p>
             </form>
           </div>
@@ -186,6 +197,8 @@
 </template>
 
 <script>
+import UserService from "../../../services/UserService";
+
 import bgImg from "@/assets/img/curved-images/curved6.jpg";
 
 import Navbar from "@/examples/PageLayout/Navbar.vue";
@@ -204,7 +217,14 @@ export default {
     VsudButton,
   },
   data() {
-    return { bgImg };
+    return {
+      bgImg,
+      newUser: {
+        name: "",
+        email: "",
+        password: "",
+      },
+    };
   },
   created() {
     this.$store.state.hideConfigButton = true;
@@ -217,6 +237,21 @@ export default {
     this.$store.state.showNavbar = true;
     this.$store.state.showSidenav = true;
     this.$store.state.showFooter = true;
+  },
+  methods: {
+    async signUp() {
+      try {
+        const response = await UserService.signUp(this.newUser);
+        console.log("signup response=>", response.data);
+
+        // Store the token in local storage
+        if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 };
 </script>

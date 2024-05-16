@@ -130,10 +130,16 @@
           <div class="card-body">
             <form role="form" class="text-start">
               <div class="mb-3">
-                <vsud-input type="email" placeholder="Email" name="email" />
+                <vsud-input
+                  v-model="existUser.email"
+                  type="email"
+                  placeholder="Email"
+                  name="email"
+                />
               </div>
               <div class="mb-3">
                 <vsud-input
+                  v-model="existUser.password"
                   type="password"
                   placeholder="Password"
                   name="password"
@@ -146,6 +152,7 @@
                   variant="gradient"
                   color="info"
                   full-width
+                  @click="signIn"
                 >
                   Sign in
                 </vsud-button>
@@ -158,14 +165,16 @@
                 </p>
               </div>
               <div class="text-center">
-                <vsud-button
-                  class="mt-2 mb-4"
-                  variant="gradient"
-                  color="dark"
-                  full-width
-                >
-                  Sign up
-                </vsud-button>
+                <router-link to="/authentication/signup/basic">
+                  <vsud-button
+                    class="mt-2 mb-4"
+                    variant="gradient"
+                    color="dark"
+                    full-width
+                  >
+                    Sign up
+                  </vsud-button>
+                </router-link>
               </div>
             </form>
           </div>
@@ -177,6 +186,8 @@
 </template>
 
 <script>
+import UserService from "../../../services/UserService";
+
 import bgImg from "@/assets/img/curved-images/curved9.jpg";
 import Navbar from "@/examples/PageLayout/Navbar.vue";
 import AppFooter from "@/examples/PageLayout/Footer.vue";
@@ -194,7 +205,13 @@ export default {
     VsudButton,
   },
   data() {
-    return { bgImg };
+    return {
+      bgImg,
+      existUser: {
+        email: "",
+        password: "",
+      },
+    };
   },
   beforeMount() {
     this.$store.state.hideConfigButton = true;
@@ -207,6 +224,21 @@ export default {
     this.$store.state.showNavbar = true;
     this.$store.state.showSidenav = true;
     this.$store.state.showFooter = true;
+  },
+  methods: {
+    async signIn() {
+      try {
+        const response = await UserService.signIn(this.existUser);
+        console.log("login response=>", response.data);
+
+        // Store the token in local storage
+        if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 };
 </script>
