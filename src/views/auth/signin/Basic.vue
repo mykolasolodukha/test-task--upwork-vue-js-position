@@ -131,7 +131,6 @@
             <form role="form" class="text-start" @submit.prevent="onLogin">
               <div class="mb-3">
                 <vsud-input
-                  v-model="email"
                   type="email"
                   placeholder="Email"
                   name="email"
@@ -141,6 +140,7 @@
                       'email',
                     ])
                   "
+                  @input="setEmail($event.target.value)"
                 />
                 <!-- Error Message -->
                 <p v-if="error?.email" style="color: red; font-size: small">
@@ -149,7 +149,6 @@
               </div>
               <div class="mb-3">
                 <vsud-input
-                  v-model="password"
                   type="password"
                   placeholder="Password"
                   name="password"
@@ -158,6 +157,7 @@
                       'required',
                     ])
                   "
+                  @input="setPassword($event.target.value)"
                 />
                 <!-- Error Message -->
                 <p v-if="error?.password" style="color: red; font-size: small">
@@ -192,7 +192,7 @@
                   Sign up
                 </vsud-button>
               </div>
-              {{ error }}
+
               <!-- General Error message -->
               <p v-if="error?.general" style="color: red; font-size: small">
                 {{ error?.general }}
@@ -216,6 +216,7 @@ import VsudButton from "@/components/VsudButton.vue";
 import useApi from "../../../composables/useApi";
 import { useRouter } from "vue-router";
 import { validateFields } from "../../../lib/util";
+import { ref } from "vue";
 
 const router = useRouter();
 export default {
@@ -227,13 +228,30 @@ export default {
     VsudSwitch,
     VsudButton,
   },
+  setup() {
+    const email = ref("");
+    const password = ref("");
+    const error = ref({});
+    const loading = ref(false);
+    const setEmail = (value) => {
+      email.value = value;
+    };
+
+    const setPassword = (value) => {
+      password.value = value;
+    };
+    return {
+      email,
+      password,
+      error,
+      loading,
+      setEmail,
+      setPassword,
+    };
+  },
   data() {
     return {
       bgImg,
-      email: "",
-      password: "",
-      loading: false,
-      error: {},
     };
   },
   beforeMount() {

@@ -138,13 +138,13 @@
             <form role="form" @submit.prevent="onSignup">
               <div class="mb-3">
                 <vsud-input
-                  v-model="name"
                   type="text"
                   placeholder="Name"
                   aria-label="Name"
                   @change="
                     onFieldInput('name', $event?.target?.value, ['required'])
                   "
+                  @input="email = $event.target.value"
                 />
 
                 <!-- Error Message -->
@@ -154,7 +154,6 @@
               </div>
               <div class="mb-3">
                 <vsud-input
-                  v-model="email"
                   type="email"
                   placeholder="Email"
                   aria-label="Email"
@@ -164,6 +163,7 @@
                       'email',
                     ])
                   "
+                  @input="email = $event.target.value"
                 />
                 <!-- Error Message -->
                 <p v-if="errors?.email" style="color: red; font-size: small">
@@ -172,7 +172,6 @@
               </div>
               <div class="mb-3">
                 <vsud-input
-                  v-model="password"
                   type="password"
                   placeholder="Password"
                   aria-label="Password"
@@ -182,6 +181,7 @@
                       'password',
                     ])
                   "
+                  @input="password = $event.target.value"
                 />
                 <!-- Error Message -->
                 <p v-if="errors?.password" style="color: red; font-size: small">
@@ -205,7 +205,6 @@
                   full-width
                   variant="gradient"
                   class="my-4 mb-2"
-                  :disabled="!agreeToTerms"
                 >
                   Sign up
                 </vsud-button>
@@ -236,6 +235,7 @@ import VsudButton from "@/components/VsudButton.vue";
 import { validateFields } from "../../../lib/util";
 import useApi from "../../../composables/useApi";
 import { useRouter } from "vue-router";
+import { ref } from "vue";
 
 const router = useRouter();
 
@@ -248,15 +248,19 @@ export default {
     VsudCheckbox,
     VsudButton,
   },
+  setup() {
+    const email = ref("");
+    const password = ref("");
+    const name = ref("");
+    const agreeToTerms = ref(false);
+    const errors = ref({});
+    const loading = ref(false);
+
+    return { email, password, name, agreeToTerms, errors, loading };
+  },
   data() {
     return {
       bgImg,
-      name: "",
-      email: "",
-      password: "",
-      agreeToTerms: true,
-      loading: false,
-      errors: {},
     };
   },
   created() {
