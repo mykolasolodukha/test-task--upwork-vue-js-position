@@ -128,15 +128,25 @@
             </div>
           </div>
           <div class="card-body">
-            <form role="form" class="text-start">
+            <form role="form" class="text-start" @submit.prevent="onSubmit">
               <div class="mb-3">
-                <vsud-input type="email" placeholder="Email" name="email" />
+                <vsud-input
+                  id="email"
+                  v-model="body.email"
+                  type="email"
+                  placeholder="Email"
+                  name="email"
+                  is-required
+                />
               </div>
               <div class="mb-3">
                 <vsud-input
+                  id="password"
+                  v-model="body.password"
                   type="password"
                   placeholder="Password"
                   name="password"
+                  is-required
                 />
               </div>
               <vsud-switch id="rememberMe"> Remember me </vsud-switch>
@@ -159,6 +169,7 @@
               </div>
               <div class="text-center">
                 <vsud-button
+                  type="submit"
                   class="mt-2 mb-4"
                   variant="gradient"
                   color="dark"
@@ -183,6 +194,8 @@ import AppFooter from "@/examples/PageLayout/Footer.vue";
 import VsudInput from "@/components/VsudInput.vue";
 import VsudSwitch from "@/components/VsudSwitch.vue";
 import VsudButton from "@/components/VsudButton.vue";
+import axios from 'axios'
+import { setAuthToken } from '@/helpers/auth'
 
 export default {
   name: "SigninBasic",
@@ -194,7 +207,14 @@ export default {
     VsudButton,
   },
   data() {
-    return { bgImg };
+    return {
+      body: {
+        email: '',
+        password: ''
+      },
+      isLoading: false,
+      bgImg
+    };
   },
   beforeMount() {
     this.$store.state.hideConfigButton = true;
@@ -208,5 +228,24 @@ export default {
     this.$store.state.showSidenav = true;
     this.$store.state.showFooter = true;
   },
+  methods: {
+    // Function to obtain JWT authentication.
+    async onSubmit () {
+      try {
+        /**
+         * Now this.isLoading is not used in any way.
+         * But, in the future, it can be used as a loading indicator as a prop for vsud-button component.
+         * */
+        this.isLoading = true
+        const response = await axios.post('auth/sign-in/', this.body)
+        setAuthToken({ jwt: response.data.bearer })
+        location.href = '/'
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.isLoading = false
+      }
+    }
+  }
 };
 </script>
