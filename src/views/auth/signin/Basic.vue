@@ -128,12 +128,19 @@
             </div>
           </div>
           <div class="card-body">
-            <form role="form" class="text-start">
+            <form role="form" class="text-start" @submit.prevent="handleLogin">
               <div class="mb-3">
-                <vsud-input type="email" placeholder="Email" name="email" />
+                <vsud-input
+                  v-model="form.email"
+                  type="email"
+                  placeholder="Email x2"
+                  name="email"
+                />
               </div>
               <div class="mb-3">
                 <vsud-input
+                  id="1234"
+                  v-model="form.password"
                   type="password"
                   placeholder="Password"
                   name="password"
@@ -142,6 +149,7 @@
               <vsud-switch id="rememberMe"> Remember me </vsud-switch>
               <div class="text-center">
                 <vsud-button
+                  type="submit"
                   class="my-4 mb-2"
                   variant="gradient"
                   color="info"
@@ -184,6 +192,11 @@ import VsudInput from "@/components/VsudInput.vue";
 import VsudSwitch from "@/components/VsudSwitch.vue";
 import VsudButton from "@/components/VsudButton.vue";
 
+import { useRouter } from 'vue-router'
+import useAuth from "@/composables/useAuth";
+
+const router = useRouter()
+
 export default {
   name: "SigninBasic",
   components: {
@@ -194,7 +207,15 @@ export default {
     VsudButton,
   },
   data() {
-    return { bgImg };
+    return {
+      bgImg,
+      isLoading: false,
+      form: {
+        email: "",
+        password: "",
+        // other details
+      },
+    };
   },
   beforeMount() {
     this.$store.state.hideConfigButton = true;
@@ -207,6 +228,26 @@ export default {
     this.$store.state.showNavbar = true;
     this.$store.state.showSidenav = true;
     this.$store.state.showFooter = true;
+  },
+  methods: {
+    async handleLogin() {
+      const { signIn } = useAuth();
+      try {
+        this.isLoading = true
+        const email = this.form.email;
+        const password = this.form.password;
+        const data = await signIn(email, password);
+
+        if(data.ok) {
+          router.push('/')
+        }
+
+      } catch(error) {
+        router.push('/authentication/signin/basic')
+      } finally {
+        this.isLoading = false
+      }
+    },
   },
 };
 </script>

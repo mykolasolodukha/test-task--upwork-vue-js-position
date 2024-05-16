@@ -135,12 +135,13 @@
             </div>
           </div>
           <div class="card-body">
-            <form role="form">
+            <form role="form" @submit.prevent="handleSignUp">
               <div class="mb-3">
-                <vsud-input type="text" placeholder="Name" aria-label="Name" />
+                <vsud-input v-model="form.name" type="text" placeholder="Name" aria-label="Name" />
               </div>
               <div class="mb-3">
                 <vsud-input
+                  v-model="form.email"
                   type="email"
                   placeholder="Email"
                   aria-label="Email"
@@ -148,12 +149,13 @@
               </div>
               <div class="mb-3">
                 <vsud-input
+                  v-model="form.password"
                   type="password"
                   placeholder="Password"
                   aria-label="Password"
                 />
               </div>
-              <vsud-checkbox id="flexCheckDefault" checked>
+              <vsud-checkbox v-model="terms" id="flexCheckDefault" checked>
                 I agree the
                 <a href="javascript:;" class="text-dark font-weight-bolder"
                   >Terms and Conditions</a
@@ -162,6 +164,7 @@
 
               <div class="text-center">
                 <vsud-button
+                  type="submit"
                   color="dark"
                   full-width
                   variant="gradient"
@@ -194,6 +197,10 @@ import VsudInput from "@/components/VsudInput.vue";
 import VsudCheckbox from "@/components/VsudCheckbox.vue";
 import VsudButton from "@/components/VsudButton.vue";
 
+import { useRouter } from 'vue-router'
+import useAuth from '@/composables/useAuth'
+
+const router = useRouter()
 export default {
   name: "SignupBasic",
   components: {
@@ -204,7 +211,15 @@ export default {
     VsudButton,
   },
   data() {
-    return { bgImg };
+    return { 
+      bgImg,
+      form: {
+        name: '',
+        email: '',
+        password: '',
+        isTermsAndC: true
+      }
+    };
   },
   created() {
     this.$store.state.hideConfigButton = true;
@@ -217,6 +232,26 @@ export default {
     this.$store.state.showNavbar = true;
     this.$store.state.showSidenav = true;
     this.$store.state.showFooter = true;
+  },
+  methods: {
+    async handleSignUp() {
+      const { signUp } = useAuth();
+      try {
+        this.isLoading = true
+        const email = this.form.email;
+        const password = this.form.password;
+        const data = await signUp(email, password);
+
+        if(data.ok) {
+          router.push('/')
+        }
+
+      } catch(error) {
+        console.log('Error: ', error)
+      } finally {
+        this.isLoading = false
+      }
+    },
   },
 };
 </script>
