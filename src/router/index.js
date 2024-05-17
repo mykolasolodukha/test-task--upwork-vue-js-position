@@ -338,4 +338,13 @@ const router = createRouter({
   linkActiveClass: "active",
 });
 
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem("token");
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next("/authentication/signin/basic");
+  } else {
+    next();
+  }
+});
+
 export default router;

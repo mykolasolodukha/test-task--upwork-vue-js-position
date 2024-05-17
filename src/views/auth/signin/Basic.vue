@@ -130,10 +130,16 @@
           <div class="card-body">
             <form role="form" class="text-start">
               <div class="mb-3">
-                <vsud-input type="email" placeholder="Email" name="email" />
+                <vsud-input
+                  v-model="email"
+                  type="email"
+                  placeholder="Email"
+                  name="email"
+                />
               </div>
               <div class="mb-3">
                 <vsud-input
+                  v-model="password"
                   type="password"
                   placeholder="Password"
                   name="password"
@@ -146,6 +152,7 @@
                   variant="gradient"
                   color="info"
                   full-width
+                  @click="signIn"
                 >
                   Sign in
                 </vsud-button>
@@ -158,14 +165,16 @@
                 </p>
               </div>
               <div class="text-center">
-                <vsud-button
-                  class="mt-2 mb-4"
-                  variant="gradient"
-                  color="dark"
-                  full-width
-                >
-                  Sign up
-                </vsud-button>
+                <router-link to="/authentication/signup/basic">
+                  <vsud-button
+                    class="mt-2 mb-4"
+                    variant="gradient"
+                    color="dark"
+                    full-width
+                  >
+                    Sign up
+                  </vsud-button>
+                </router-link>
               </div>
             </form>
           </div>
@@ -183,6 +192,7 @@ import AppFooter from "@/examples/PageLayout/Footer.vue";
 import VsudInput from "@/components/VsudInput.vue";
 import VsudSwitch from "@/components/VsudSwitch.vue";
 import VsudButton from "@/components/VsudButton.vue";
+import { mapActions } from "vuex";
 
 export default {
   name: "SigninBasic",
@@ -194,7 +204,7 @@ export default {
     VsudButton,
   },
   data() {
-    return { bgImg };
+    return { bgImg, email: "", password: "" };
   },
   beforeMount() {
     this.$store.state.hideConfigButton = true;
@@ -207,6 +217,14 @@ export default {
     this.$store.state.showNavbar = true;
     this.$store.state.showSidenav = true;
     this.$store.state.showFooter = true;
+  },
+  methods: {
+    ...mapActions(["signIn"]),
+    signIn() {
+      this.signIn({ email: this.email, password: this.password }).then(() => {
+        this.$router.push("/");
+      });
+    },
   },
 };
 </script>

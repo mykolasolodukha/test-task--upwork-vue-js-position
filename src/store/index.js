@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import axiosInstance from "../config.js";
 
 export default createStore({
   state: {
@@ -18,6 +19,8 @@ export default createStore({
     showFooter: true,
     showMain: true,
     isLargeScreen: true,
+    token: localStorage.getItem("token") || null,
+    authStatus: "",
   },
   mutations: {
     toggleConfigurator(state) {
@@ -49,6 +52,17 @@ export default createStore({
     },
     sidebarType(state, payload) {
       state.isTransparent = payload;
+    },
+    setToken(state, token) {
+      state.token = token;
+      localStorage.setItem("token", token);
+    },
+    clearToken(state) {
+      state.token = null;
+      localStorage.removeItem("token");
+    },
+    setAuthStatus(state, status) {
+      state.authStatus = status;
     },
   },
   actions: {
@@ -90,6 +104,43 @@ export default createStore({
     },
     setIsLargeScreen({ commit }, payload) {
       commit("SET_IS_LARGE_SCREEN", !!payload);
+    },
+    async signIn({ commit }, credentials) {
+      try {
+        const response = await axiosInstance.post(
+          "www.api.example.com/auth/sign-in",
+          credentials
+        );
+        commit("setToken", response.data.token);
+        commit("setAuthStatus", "success");
+        this.$router.push("/");
+      } catch (error) {
+        commit("clearToken"); // Clear token if authentication fails
+        commit("setAuthStatus", "error");
+        // Optionally handle error, like showing a message to the user
+        console.error("Sign In Error:", error);
+        throw error; // Re-throw if you want calling components to handle it further
+      }
+    },
+    async signUp({ commit }, credentials) {
+      try {
+        const response = await axiosInstance.post(
+          "www.api.example.com/auth/sign-up",
+          credentials
+        );
+        commit("setToken", response.data.token);
+        commit("setAuthStatus", "success");
+        this.$router.push("/");
+      } catch (error) {
+        commit("clearToken");
+        commit("setAuthStatus", "error");
+        console.error("Sign Up Error:", error);
+        throw error;
+      }
+    },
+    signOut({ commit }) {
+      commit("clearToken");
+      this.$router.push("/authentication/signin/basic");
     },
   },
   getters: {
