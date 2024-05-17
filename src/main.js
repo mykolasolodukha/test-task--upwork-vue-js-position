@@ -12,6 +12,7 @@ Coded by www.creative-tim.com
 import { createApp } from "vue";
 import App from "./App.vue";
 import store from "./store";
+import "./permission";
 import router from "./router";
 import "./assets/css/nucleo-icons.css";
 import "./assets/css/nucleo-svg.css";
