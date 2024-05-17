@@ -128,16 +128,40 @@
             </div>
           </div>
           <div class="card-body">
-            <form role="form" class="text-start">
+            <form role="form" class="text-start" @submit.prevent="onLogin">
               <div class="mb-3">
-                <vsud-input type="email" placeholder="Email" name="email" />
+                <vsud-input
+                  type="email"
+                  id="email"
+                  placeholder="Email"
+                  name="email"
+                  @change="onCheckInputValue('email', $event?.target?.value)"
+                  @input="setEmail($event.target.value)"
+                />
+                <p
+                  v-if="inputErrors?.email"
+                  class="text-sm font-weight-bold"
+                  style="color: red"
+                >
+                  Invalid email
+                </p>
               </div>
               <div class="mb-3">
                 <vsud-input
                   type="password"
+                  id="password"
                   placeholder="Password"
                   name="password"
+                  @change="onCheckInputValue('password', $event?.target?.value)"
+                  @input="setPassword($event.target.value)"
                 />
+                <p
+                  v-if="inputErrors?.password"
+                  class="text-sm font-weight-bold"
+                  style="color: red"
+                >
+                  Invalid password
+                </p>
               </div>
               <vsud-switch id="rememberMe"> Remember me </vsud-switch>
               <div class="text-center">
@@ -167,6 +191,19 @@
                   Sign up
                 </vsud-button>
               </div>
+              <p
+                v-if="errorMessage"
+                class="mt-1 text-sm font-weight-bold"
+                style="color: red"
+              >
+                {{ errorMessage }}
+              </p>
+              <p
+                v-if="isLoading"
+                class="mt-1 text-sm font-weight-bold text-secondary"
+              >
+                Loading...
+              </p>
             </form>
           </div>
         </div>
@@ -183,6 +220,11 @@ import AppFooter from "@/examples/PageLayout/Footer.vue";
 import VsudInput from "@/components/VsudInput.vue";
 import VsudSwitch from "@/components/VsudSwitch.vue";
 import VsudButton from "@/components/VsudButton.vue";
+import useAuth from "../../../composables/useAuth";
+import { validateFields } from "../../../helpers";
+import { ref } from "vue";
+
+const { signIn } = useAuth();
 
 export default {
   name: "SigninBasic",
@@ -193,8 +235,33 @@ export default {
     VsudSwitch,
     VsudButton,
   },
+  setup() {
+    const email = ref("");
+    const password = ref("");
+    const errorMessage = ref("");
+    const inputErrors = ref({});
+    const isLoading = ref(false);
+    const setEmail = (value) => {
+      email.value = value;
+    };
+
+    const setPassword = (value) => {
+      password.value = value;
+    };
+    return {
+      email,
+      password,
+      errorMessage,
+      inputErrors,
+      isLoading,
+      setEmail,
+      setPassword,
+    };
+  },
   data() {
-    return { bgImg };
+    return {
+      bgImg,
+    };
   },
   beforeMount() {
     this.$store.state.hideConfigButton = true;
@@ -207,6 +274,35 @@ export default {
     this.$store.state.showNavbar = true;
     this.$store.state.showSidenav = true;
     this.$store.state.showFooter = true;
+  },
+  methods: {
+    async onLogin() {
+      try {
+        const isValidData = validateFields([
+          { value: this.email, name: "email" },
+          { value: this.password, name: "password" },
+        ]);
+        if (isValidData) {
+          this.isLoading = true;
+          this.inputErrors = {};
+          this.errorMessage = "";
+          await signIn(this.email, this.password);
+        }
+      } catch (err) {
+        this.errorMessage = err.response.data.message;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    onCheckInputValue(name, value) {
+      const errors = validateFields([{ value, name }]);
+      if (errors[name]) {
+        this.inputErrors = { ...this.inputErrors, ...errors };
+      } else {
+        delete this.inputErrors[name];
+      }
+    },
   },
 };
 </script>
