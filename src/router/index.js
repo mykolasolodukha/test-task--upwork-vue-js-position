@@ -54,6 +54,8 @@ import lockBasic from "../views/auth/lock/Basic.vue";
 import lockCover from "../views/auth/lock/Cover.vue";
 import lockIllustration from "../views/auth/lock/Illustration.vue";
 
+// import useAuth from '../composables/useAuth'
+
 const routes = [
   {
     path: "/",
