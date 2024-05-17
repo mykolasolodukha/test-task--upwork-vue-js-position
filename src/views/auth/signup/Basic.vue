@@ -137,10 +137,16 @@
           <div class="card-body">
             <form role="form">
               <div class="mb-3">
-                <vsud-input type="text" placeholder="Name" aria-label="Name" />
+                <vsud-input
+                  v-model="name"
+                  type="text"
+                  placeholder="Name"
+                  aria-label="Name"
+                />
               </div>
               <div class="mb-3">
                 <vsud-input
+                  v-model="email"
                   type="email"
                   placeholder="Email"
                   aria-label="Email"
@@ -148,12 +154,13 @@
               </div>
               <div class="mb-3">
                 <vsud-input
+                  v-model="password"
                   type="password"
                   placeholder="Password"
                   aria-label="Password"
                 />
               </div>
-              <vsud-checkbox id="flexCheckDefault" checked>
+              <vsud-checkbox id="flexCheckDefault" v-model="registrationTerms">
                 I agree the
                 <a href="javascript:;" class="text-dark font-weight-bolder"
                   >Terms and Conditions</a
@@ -193,6 +200,7 @@ import AppFooter from "@/examples/PageLayout/Footer.vue";
 import VsudInput from "@/components/VsudInput.vue";
 import VsudCheckbox from "@/components/VsudCheckbox.vue";
 import VsudButton from "@/components/VsudButton.vue";
+import { mapActions } from "vuex";
 
 export default {
   name: "SignupBasic",
@@ -204,7 +212,13 @@ export default {
     VsudButton,
   },
   data() {
-    return { bgImg };
+    return {
+      bgImg,
+      name: "",
+      email: "",
+      password: "",
+      registrationTerms: false,
+    };
   },
   created() {
     this.$store.state.hideConfigButton = true;
@@ -217,6 +231,19 @@ export default {
     this.$store.state.showNavbar = true;
     this.$store.state.showSidenav = true;
     this.$store.state.showFooter = true;
+  },
+  methods: {
+    ...mapActions(["signIn"]),
+    signUp() {
+      this.signUp({
+        name: this.name,
+        email: this.email,
+        password: this.password,
+        registrationTerms: this.registrationTerms,
+      }).then(() => {
+        this.$router.push("/");
+      });
+    },
   },
 };
 </script>
