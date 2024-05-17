@@ -24,14 +24,13 @@ service.interceptors.response.use(
       return res.data;
     } else {
       if (noAuthCode.includes(status) && !location.href.includes("/login")) {
-        alert("Please login again");
-        removeItem("token");
+        removeItem("accessToken");
+        removeItem("refreshToken");
       }
       return Promise.reject(res.data);
     }
   },
   (err) => {
-    alert(err.message);
     return Promise.reject(err);
   }
 );

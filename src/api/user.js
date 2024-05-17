@@ -1,4 +1,4 @@
-import { signinApi, signupApi, signoutApi } from "./api";
+import { signinApi, signupApi, signoutApi, getUserInfoApi } from "./api";
 import axiosReq from "@/utils/axios-req";
 
 
@@ -31,3 +31,11 @@ export const signoutReq = () => {
     isAlertErrorMsg: true
   });
 };
+
+export function getUserInfoReq() {
+  return axiosReq({
+    url: getUserInfoApi,
+    method: "get",
+    isAlertErrorMsg: false
+  });
+}

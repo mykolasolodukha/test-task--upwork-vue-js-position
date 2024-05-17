@@ -39,5 +39,24 @@ export default [
         }
       };
     }
+  },
+  {
+    url: "/api/v1/auth/get-user-info",
+    method: "get",
+    response: () => {
+      // return {
+      //   status: 200,
+      //   data: {
+      //     id: 1,
+      //     name: "admin",
+      //     email: "123@gmail.com",
+      //     role: "admin"
+      //   }
+      // };
+      return {
+        status: 401,
+        message: "Token expired, please login again."
+      };
+    }
   }
 ];
