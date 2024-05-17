@@ -6,8 +6,8 @@ const path = require("path");
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
-  const env = loadEnv(mode, process.cwd(), ""); //獲取環境變量
-  console.log(command, mode);
+  const env = loadEnv(mode, process.cwd(), "");
+  console.log(command, mode, env.VITE_APP_PROXY_URL);
   return {
     base: setting.viteBasePath,
     plugins: [
@@ -32,7 +32,7 @@ export default defineConfig(({ command, mode }) => {
         "/api": {
           target: env.VITE_APP_PROXY_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, "")
+          rewrite: (path) => path.replace(/^\/api/, ""),
         }
       }
     }

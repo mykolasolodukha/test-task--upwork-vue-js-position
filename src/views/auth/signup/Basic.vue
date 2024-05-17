@@ -137,13 +137,21 @@
           <div class="card-body">
             <form role="form">
               <div class="mb-3">
-                <vsud-input type="text" placeholder="Name" aria-label="Name" />
+                <vsud-input
+                  type="text"
+                  placeholder="Name"
+                  aria-label="Name"
+                  :value="subForm.name"
+                  @input="subForm.name = $event.target.value"
+                />
               </div>
               <div class="mb-3">
                 <vsud-input
                   type="email"
                   placeholder="Email"
                   aria-label="Email"
+                  :value="subForm.email"
+                  @input="subForm.email = $event.target.value"
                 />
               </div>
               <div class="mb-3">
@@ -151,12 +159,14 @@
                   type="password"
                   placeholder="Password"
                   aria-label="Password"
+                  :value="subForm.password"
+                  @input="subForm.password = $event.target.value"
                 />
               </div>
               <vsud-checkbox id="flexCheckDefault" checked>
                 I agree the
                 <a href="javascript:;" class="text-dark font-weight-bolder"
-                  >Terms and Conditions</a
+                >Terms and Conditions</a
                 >
               </vsud-checkbox>
 
@@ -166,6 +176,7 @@
                   full-width
                   variant="gradient"
                   class="my-4 mb-2"
+                  @click.prevent="handleSignup"
                 >
                   Sign up
                 </vsud-button>
@@ -173,7 +184,7 @@
               <p class="text-sm mt-3 mb-0">
                 Already have an account?
                 <a href="javascript:;" class="text-dark font-weight-bolder"
-                  >Sign in</a
+                >Sign in</a
                 >
               </p>
             </form>
@@ -193,6 +204,7 @@ import AppFooter from "@/examples/PageLayout/Footer.vue";
 import VsudInput from "@/components/VsudInput.vue";
 import VsudCheckbox from "@/components/VsudCheckbox.vue";
 import VsudButton from "@/components/VsudButton.vue";
+import { signupReq } from "@/api/user";
 
 export default {
   name: "SignupBasic",
@@ -201,10 +213,15 @@ export default {
     AppFooter,
     VsudInput,
     VsudCheckbox,
-    VsudButton,
+    VsudButton
   },
   data() {
-    return { bgImg };
+    const subForm = {
+      name: "",
+      email: "",
+      password: ""
+    };
+    return { bgImg, subForm };
   },
   created() {
     this.$store.state.hideConfigButton = true;
@@ -218,5 +235,29 @@ export default {
     this.$store.state.showSidenav = true;
     this.$store.state.showFooter = true;
   },
+  methods: {
+    handleSignup() {
+      // 1. Do some form validation
+      // 2. Set True to Loading component
+      // 3. Call signup function
+
+      this.signupFunc();
+    },
+    signupFunc() {
+      // 4. Call API
+      // 5. If success, redirect to login page
+      // 6. If fail, show error message
+      signupReq(this.subForm)
+        .then(({ data }) => {
+          alert("Signup Success");
+          console.log(data);
+          this.$router.push({ name: "Signin Basic" });
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("Signup Fail");
+        });
+    }
+  }
 };
 </script>
