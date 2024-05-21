@@ -54,7 +54,19 @@
           </div>
         </div>
         <ul class="navbar-nav justify-content-end">
-          <li class="nav-item d-flex align-items-center">
+          <li v-if="isLogin" class="nav-item d-flex align-items-center">
+            <i
+              class="fa fa-user"
+              :class="$store.state.isRTL ? 'ms-sm-2' : 'me-sm-1'"
+              @click="signOut"
+            />
+            <span v-if="$store.state.isRTL" class="d-sm-inline d-none"
+            >يسجل خروج</span
+            >
+            <span v-else class="d-sm-inline d-none" @click="signOut">Sign out</span>
+
+          </li>
+          <li v-else class="nav-item d-flex align-items-center">
             <router-link
               :to="{ name: 'Signin Basic' }"
               class="px-0 nav-link font-weight-bold"
@@ -65,7 +77,7 @@
                 :class="$store.state.isRTL ? 'ms-sm-2' : 'me-sm-1'"
               />
               <span v-if="$store.state.isRTL" class="d-sm-inline d-none"
-                >يسجل دخول</span
+              >يسجل دخول</span
               >
               <span v-else class="d-sm-inline d-none">Sign In</span>
             </router-link>
@@ -226,28 +238,50 @@
 </template>
 <script>
 import Breadcrumbs from "../Breadcrumbs.vue";
+import { getItem, removeItem } from "@/utils/local-storage";
+import { signoutReq } from "@/api/user";
 
 export default {
   name: "Navbar",
 
   components: {
-    Breadcrumbs,
+    Breadcrumbs
   },
   props: {
     textWhite: {
       type: String,
-      default: "",
-    },
+      default: ""
+    }
   },
   data() {
     return {
       showMenu: false,
+      isLogin: getItem("isLogin")
     };
   },
   computed: {
     currentRouteName() {
       return this.$route.name;
-    },
+    }
   },
+  methods: {
+    signOut() {
+      confirm("Are you sure you want to sign out?");
+      signoutReq()
+        .then(({ data }) => {
+          alert("Signout Success");
+          console.log(data);
+          removeItem("isLogin");
+          removeItem("accessToken");
+          removeItem("refreshToken");
+          this.isLogin = false;
+          this.$router.push({ name: "Signin Basic" });
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("Signout Fail");
+        });
+    }
+  }
 };
 </script>

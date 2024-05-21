@@ -130,22 +130,31 @@
           <div class="card-body">
             <form role="form" class="text-start">
               <div class="mb-3">
-                <vsud-input type="email" placeholder="Email" name="email" />
+                <vsud-input
+                  type="email"
+                  placeholder="Email"
+                  name="email"
+                  :value="subForm.email"
+                  @input="subForm.email = $event.target.value"
+                />
               </div>
               <div class="mb-3">
                 <vsud-input
                   type="password"
                   placeholder="Password"
                   name="password"
+                  :value="subForm.password"
+                  @input="subForm.password = $event.target.value"
                 />
               </div>
-              <vsud-switch id="rememberMe"> Remember me </vsud-switch>
+              <vsud-switch id="rememberMe"> Remember me</vsud-switch>
               <div class="text-center">
                 <vsud-button
                   class="my-4 mb-2"
                   variant="gradient"
                   color="info"
                   full-width
+                  @click.prevent="handleLogin"
                 >
                   Sign in
                 </vsud-button>
@@ -163,6 +172,7 @@
                   variant="gradient"
                   color="dark"
                   full-width
+                  @click.prevent="() => $router.push({ name: 'Signup Basic' })"
                 >
                   Sign up
                 </vsud-button>
@@ -183,6 +193,8 @@ import AppFooter from "@/examples/PageLayout/Footer.vue";
 import VsudInput from "@/components/VsudInput.vue";
 import VsudSwitch from "@/components/VsudSwitch.vue";
 import VsudButton from "@/components/VsudButton.vue";
+import { setItem } from "@/utils/local-storage";
+import { loginReq } from "@/api/user";
 
 export default {
   name: "SigninBasic",
@@ -191,10 +203,14 @@ export default {
     AppFooter,
     VsudInput,
     VsudSwitch,
-    VsudButton,
+    VsudButton
   },
   data() {
-    return { bgImg };
+    const subForm = {
+      email: "",
+      password: ""
+    };
+    return { bgImg, subForm };
   },
   beforeMount() {
     this.$store.state.hideConfigButton = true;
@@ -208,5 +224,32 @@ export default {
     this.$store.state.showSidenav = true;
     this.$store.state.showFooter = true;
   },
+  methods: {
+    handleLogin() {
+      // 1. Do some form validation
+      // 2. Set True to Loading component
+      // 3. Call login function
+
+      this.loginFunc();
+    },
+    loginFunc() {
+      loginReq(this.subForm)
+        .then(({ data }) => {
+          alert("Login Success");
+          // console.log(data);
+          setItem("accessToken", data?.tokens.accessToken);
+          setItem("refreshToken", data?.tokens.refreshToken);
+          setItem("isLogin", true);
+          this.$router.push({ name: "Default" });
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("Login Failed");
+        })
+        .finally(() => {
+          // 4. Set False to Loading component
+        });
+    }
+  }
 };
 </script>
